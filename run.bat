@@ -1,1 +1,1 @@
-deno run -A --unstable --watch server.js
+deno run -A --watch server.js
