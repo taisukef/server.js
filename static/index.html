@@ -1,12 +1,15 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
-<title>DenoでシンプルなBBS</title>
+<title>Denoでログイン付きBBS</title>
 
 <script type="module">
 import { fetchJSON } from "https://js.sabae.cc/fetchJSON.js";
 import { enc } from "https://js.sabae.cc/enc.js";
 import { DateTime } from "https://code4fukui.github.io/day-es/DateTime.js";
+import { hash } from "https://js.sabae.cc/hash.js";
 
 window.onload = async () => {
+    let session = null;
+
     const load = async () => {
         const data = await fetchJSON("api/list");
         console.log(data);
@@ -21,16 +24,49 @@ window.onload = async () => {
     };
     load();
 
+    btn_regist.onclick = async () => {
+        const item = {
+            name: inp_name.value.trim(),
+            password: hash(inp_password.value),
+            date: new DateTime(),
+        };
+        const res = await fetchJSON("api/regist", item);
+        if (!res) {
+            alert("ユーザー登録またはログインに失敗しました");
+            return;
+        }
+        session = res;
+        inp_password.value = "";
+        regist.style.display = "none";
+        logout.style.display = "block";
+        write.style.display = "block";
+    };
+
     btn_write.onclick = async () => {
+        if (!session) {
+            alert("ユーザー登録してください")
+            return;
+        }
         const item = {
             name: inp_name.value,
             body: inp_body.value,
             date: new DateTime(),
+            session,
         };
-        if (await fetchJSON("api/add", item) == "ok") {
-            await load();
+        if (await fetchJSON("api/add", item) != "ok") {
+            alert("書き込みに失敗しました");
+            return;
         }
-    }
+        inp_body.value = "";
+        await load();
+    };
+
+    logout.onclick = () => {
+        session = null;
+        regist.style.display = "block";
+        logout.style.display = "none";
+        write.style.display = "none";
+    };
 };
 </script>
 
@@ -53,16 +89,23 @@ input, textarea {
 </head>
 
 <body>
-<h1>DenoでシンプルなBBS</h1>
+<h1>Denoでログイン付きBBS</h1>
 <div id=container></div>
 
-<div class=writebox>
+<div id=regist class=writebox>
     名前：<input type=text id=inp_name><br>
+    パスワード：<input type=password id=inp_password><br>
+    <button id=btn_regist>ユーザー登録 or ログイン</button>
+</div>
+
+<div id=write class=writebox style="display:none">
     <textarea id=inp_body></textarea><br>
     <button id=btn_write>書き込む</button>
 </div>
 
-<footer>App: CC BY <a href=https://fukuno.jig.jp/3169>@taisukef</a></footer>
+<button id=logout style="display:none">ログアウト</button>
+
+<footer>App: CC BY <a href=https://fukuno.jig.jp/3315>@taisukef</a></footer>
 </body>
 
 </html>
