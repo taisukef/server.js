@@ -1,20 +1,19 @@
 import { Server } from "https://js.sabae.cc/Server.js";
+import { jsonfs } from "https://js.sabae.cc/jsonfs.js";
 
-const scores = [];
+const datafn = "data.json";
+let data = jsonfs.read(datafn) || [];
 
 class MyServer extends Server {
-  api(path, req, remoteAddr) {
-    console.log(path, req);
+  api(path, req) {
     if (path == "/api/list") {
-      return scores;
+      return data;
     } else if (path == "/api/add") {
-      scores.push(req);
-      scores.sort((a, b) => b.score - a.score);
+      data.push(req);
+      jsonfs.write(datafn, data);
       return "ok";
-    } else {
-      console.log(remoteAddr);
-      return { message: "Hello! your IP is: ", remoteAddr, date: new Date() };
     }
   }
-};
+}
+
 new MyServer(8001);
