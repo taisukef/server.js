@@ -1,16 +1,15 @@
 import { Server } from "https://js.sabae.cc/Server.js";
-import { jsonfs } from "https://js.sabae.cc/jsonfs.js";
+import { JSONDB } from "https://js.sabae.cc/JSONDB.js";
 
-const datafn = "data.json";
-let data = jsonfs.read(datafn) || [];
+const bbs = new JSONDB("bbs.json");
 
 class MyServer extends Server {
   api(path, req) {
     if (path == "/api/list") {
-      return data;
+      return bbs.data;
     } else if (path == "/api/add") {
-      data.push(req);
-      jsonfs.write(datafn, data);
+      bbs.data.push(req);
+      bbs.write();
       return "ok";
     }
   }
