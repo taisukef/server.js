@@ -10,3 +10,8 @@ deno run -A server.js
 ```
 
 [http://localhost:8001](http://localhost:8001) をブラウザで開く。
+
+## データ
+
+- user.json : ユーザー管理データ（名前、パスワード、セッションキー）
+- bbs.json : 書き込みデータ
