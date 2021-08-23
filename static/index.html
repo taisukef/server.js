@@ -43,10 +43,6 @@ window.onload = async () => {
     };
 
     btn_write.onclick = async () => {
-        if (!session) {
-            alert("ユーザー登録してください")
-            return;
-        }
         const item = {
             name: inp_name.value,
             body: inp_body.value,
