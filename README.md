@@ -15,3 +15,8 @@ deno run -A server.js
 
 - user.json : ユーザー管理データ（名前、パスワード、セッションキー）
 - bbs.json : 書き込みデータ
+
+## 参考
+
+- [バックエンドにデータベース、PostgreSQLを使う方法](https://github.com/code4fukui/DB_PostgreSQL)
+
